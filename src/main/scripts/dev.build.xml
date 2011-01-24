@@ -7,14 +7,14 @@
 
   <!-- entry points : start and stop -->
   <target name="start"
-          depends="expand-database-profile,prepare-standalone-configuration,drop-database,locate-workspace,configure-sonar">
+          depends="expand-database-profile,prepare-standalone-configuration,drop-database,configure-sonar">
     <parallel>
       <antcall target="start-standalone"/>
       <antcall target="setup"/>
     </parallel>
   </target>
 
-  <target name="stop" depends="locate-workspace,prepare-standalone-configuration,stop-standalone"/>
+  <target name="stop" depends="prepare-standalone-configuration,stop-standalone"/>
 
   <target name="prepare-standalone-configuration">
     <condition property="sonar.bin.path" value="bin/macosx-universal-64/sonar.sh">
@@ -127,14 +127,14 @@
   </target>
 
 
-  <target name="start-war" depends="locate-workspace,expand-database-profile,drop-database,configure-sonar">
+  <target name="start-war" depends="expand-database-profile,drop-database,configure-sonar">
     <parallel>
-      <antcall target="start-tomcat"/>
+      <antcall target="start-container"/>
       <antcall target="setup"/>
     </parallel>
   </target>
 
-  <target name="stop-war" depends="locate-workspace,stop-tomcat"/>
+  <target name="stop-war" depends="stop-container"/>
 
   <!-- STEP 1 : initialize the database -->
   <target name="drop-database">
@@ -165,14 +165,6 @@
 
 
   <!-- STEP 2 : install Sonar -->
-  <target name="locate-workspace" depends="define-workspace">
-    <echo>Workspace: ${workspaceDir}</echo>
-  </target>
-
-  <target name="define-workspace" unless="workspaceDir">
-    <property name="workspaceDir" value="${java.io.tmpdir}/sonar"/>
-  </target>
-
   <target name="clean-workspace" if="execute.cleanWorkspace">
     <delete dir="${workspaceDir}/sonar-${runtimeVersion}"/>
     <mkdir dir="${workspaceDir}"/>
@@ -224,6 +216,7 @@
 
 
   <target name="configure-sonar">
+    <echo>Workspace: ${workspaceDir}</echo>
     <condition property="execute.cleanWorkspace" value="true">
       <istrue value="${clean}"/>
     </condition>
@@ -303,24 +296,24 @@
   </target>
 
 
-  <target name="start-tomcat">
+  <target name="start-container">
     <echo>Build WAR</echo>
     <ant dir="${workspaceDir}/sonar-${runtimeVersion}/war/" inheritAll="false"/>
 
-    <mkdir dir="${workspaceDir}/tomcat6"/>
+    <mkdir dir="${workspaceDir}/${containerId}"/>
     <mkdir dir="${workspaceDir}/sonar-${runtimeVersion}/logs"/>
 
     <condition property="sonar.wait" value="true" else="false">
       <isfalse value="${background}"/>
     </condition>
-    <echo>Start tomcat, background mode: ${background}</echo>
+    <echo>Start JEE container, background mode: ${background}</echo>
 
-    <cargo containerId="tomcat6x" action="start" wait="${sonar.wait}" id="tmptmct6-${runtimeVersion}"
+    <cargo containerId="${containerId}" action="start" wait="${sonar.wait}" id="${containerId}-${runtimeVersion}"
            output="${workspaceDir}/sonar-${runtimeVersion}/logs/output.log"
            log="${workspaceDir}/sonar-${runtimeVersion}/logs/cargo.log">
       <zipurlinstaller
-          installurl="http://archive.apache.org/dist/tomcat/tomcat-6/v6.0.26/bin/apache-tomcat-6.0.26.zip"/>
-      <configuration type="standalone" home="${workspaceDir}/tomcat6">
+          installurl="${containerUrl}"/>
+      <configuration type="standalone" home="${workspaceDir}/${containerId}">
         <property name="cargo.jvmargs"
                   value="-Xmx1024m -XX:MaxPermSize=256m -server -Dsonar.jdbc.url=${jdbcUrl} -Dsonar.jdbc.driverClassName=${jdbcDriver} -Dsonar.jdbc.username=${jdbcUsername} -Dsonar.jdbc.password=${jdbcPassword}"/>
         <property name="cargo.servlet.port" value="9000"/>
@@ -334,12 +327,12 @@
     <antcall target="wait-for-server"/>
   </target>
 
-  <target name="stop-tomcat">
-    <echo>Stopping tomcat</echo>
-    <cargo containerId="tomcat6x" action="stop" wait="true" id="tmptmct6-${runtimeVersion}">
+  <target name="stop-container">
+    <echo>Stopping JEE container</echo>
+    <cargo containerId="${containerId}" action="stop" wait="true" id="${containerId}-${runtimeVersion}">
       <zipurlinstaller
-          installurl="http://archive.apache.org/dist/tomcat/tomcat-6/v6.0.26/bin/apache-tomcat-6.0.26.zip"/>
-      <configuration type="standalone" home="${workspaceDir}/tomcat6">
+          installurl="${containerUrl}"/>
+      <configuration type="standalone" home="${workspaceDir}/${containerId}">
         <property name="cargo.jvmargs" value="-Xmx512m -server"/>
         <property name="cargo.servlet.port" value="9000"/>
         <property name="cargo.remote.username" value="admin"/>
