@@ -96,7 +96,7 @@
           <property>pluginArtifact</property>
           <expression>${sonar.pluginArtifact}</expression>
           <required>false</required>
-          <type>java.lang.File</type>
+          <type>java.io.File</type>
           <defaultValue>${project.build.directory}/${project.build.finalName}.jar</defaultValue>
         </parameter>
         <parameter>
@@ -114,7 +114,7 @@
           <property>extensionsDir</property>
           <expression>${sonar.extensionsDir}</expression>
           <required>false</required>
-          <type>java.lang.File</type>
+          <type>java.io.File</type>
           <defaultValue>${project.build.directory}/extensions</defaultValue>
         </parameter>
         <parameter>
@@ -141,7 +141,7 @@
           <property>localRepository</property>
           <expression>${settings.localRepository}</expression>
           <required>false</required>
-          <type>java.lang.File</type>
+          <type>java.io.File</type>
         </parameter>
         <parameter>
           <name>configBackup</name>
@@ -149,8 +149,17 @@
           <property>configBackup</property>
           <expression>${sonar.configBackup}</expression>
           <required>false</required>
-          <type>java.lang.File</type>
+          <type>java.io.File</type>
         </parameter>
+        <parameter>
+          <name>workspaceDir</name>
+          <description>Workspace used to install and start server</description>
+          <property>workspaceDir</property>
+          <expression>${sonar.workspaceDir}</expression>
+          <required>false</required>
+          <type>java.io.File</type>
+        </parameter>
+        
       </parameters>
     </mojo>
 
@@ -167,6 +176,14 @@
           <required>true</required>
           <type>java.lang.String</type>
           <expression>${sonar.runtimeVersion}</expression>
+        </parameter>
+        <parameter>
+          <name>workspaceDir</name>
+          <description>Workspace used to install and start server</description>
+          <property>workspaceDir</property>
+          <expression>${sonar.workspaceDir}</expression>
+          <required>false</required>
+          <type>java.io.File</type>
         </parameter>
       </parameters>
     </mojo>
@@ -267,7 +284,7 @@
           <property>pluginArtifact</property>
           <expression>${sonar.pluginArtifact}</expression>
           <required>false</required>
-          <type>java.lang.File</type>
+          <type>java.io.File</type>
           <defaultValue>${project.build.directory}/${project.build.finalName}.jar</defaultValue>
         </parameter>
         <parameter>
@@ -285,7 +302,7 @@
           <property>extensionsDir</property>
           <expression>${sonar.extensionsDir}</expression>
           <required>false</required>
-          <type>java.lang.File</type>
+          <type>java.io.File</type>
           <defaultValue>${project.build.directory}/extensions</defaultValue>
         </parameter>
         <parameter>
@@ -312,7 +329,7 @@
           <property>localRepository</property>
           <expression>${settings.localRepository}</expression>
           <required>false</required>
-          <type>java.lang.File</type>
+          <type>java.io.File</type>
         </parameter>
         <parameter>
           <name>configBackup</name>
@@ -320,7 +337,15 @@
           <property>configBackup</property>
           <expression>${sonar.configBackup}</expression>
           <required>false</required>
-          <type>java.lang.File</type>
+          <type>java.io.File</type>
+        </parameter>
+        <parameter>
+          <name>workspaceDir</name>
+          <description>Workspace used to install and start server</description>
+          <property>workspaceDir</property>
+          <expression>${sonar.workspaceDir}</expression>
+          <required>false</required>
+          <type>java.io.File</type>
         </parameter>
       </parameters>
     </mojo>
@@ -338,6 +363,14 @@
           <required>true</required>
           <type>java.lang.String</type>
           <expression>${sonar.runtimeVersion}</expression>
+        </parameter>
+        <parameter>
+          <name>workspaceDir</name>
+          <description>Workspace used to install and start server</description>
+          <property>workspaceDir</property>
+          <expression>${sonar.workspaceDir}</expression>
+          <required>false</required>
+          <type>java.io.File</type>
         </parameter>
       </parameters>
     </mojo>
@@ -398,7 +431,7 @@
           <property>projectsDir</property>
           <expression>${sonar.projectsDir}</expression>
           <required>true</required>
-          <type>java.lang.File</type>
+          <type>java.io.File</type>
           <defaultValue>${basedir}</defaultValue>
         </parameter>
         <parameter>
@@ -407,7 +440,7 @@
           <property>mavenHome</property>
           <required>true</required>
           <expression>${sonar.mavenHome}</expression>
-          <type>java.lang.File</type>
+          <type>java.io.File</type>
           <defaultValue>${maven.home}</defaultValue>
         </parameter>
       </parameters>
