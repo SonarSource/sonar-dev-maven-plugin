@@ -152,10 +152,10 @@
           <type>java.io.File</type>
         </parameter>
         <parameter>
-          <name>workspaceDir</name>
-          <description>Path to temporary directory used to install and start server.</description>
-          <property>workspaceDir</property>
-          <expression>${sonar.workspaceDir}</expression>
+          <name>workDir</name>
+          <description>Path to working directory used to install and start server.</description>
+          <property>workDir</property>
+          <expression>${sonar.workDir}</expression>
           <required>true</required>
           <type>java.io.File</type>
           <defaultValue>${java.io.tmpdir}/sonar</defaultValue>
@@ -188,10 +188,10 @@
           <expression>${sonar.runtimeVersion}</expression>
         </parameter>
         <parameter>
-          <name>workspaceDir</name>
-          <description>Workspace used to install and start server</description>
-          <property>workspaceDir</property>
-          <expression>${sonar.workspaceDir}</expression>
+          <name>workDir</name>
+          <description>Path to working directory used to install and start server</description>
+          <property>workDir</property>
+          <expression>${sonar.workDir}</expression>
           <required>true</required>
           <type>java.io.File</type>
           <defaultValue>${java.io.tmpdir}/sonar</defaultValue>
@@ -351,10 +351,10 @@
           <type>java.io.File</type>
         </parameter>
         <parameter>
-          <name>workspaceDir</name>
+          <name>workDir</name>
           <description>Workspace used to install and start server</description>
-          <property>workspaceDir</property>
-          <expression>${sonar.workspaceDir}</expression>
+          <property>workDir</property>
+          <expression>${sonar.workDir}</expression>
           <required>true</required>
           <type>java.io.File</type>
           <defaultValue>${java.io.tmpdir}/sonar</defaultValue>
@@ -405,10 +405,10 @@
           <expression>${sonar.runtimeVersion}</expression>
         </parameter>
         <parameter>
-          <name>workspaceDir</name>
-          <description>Workspace used to install and start server</description>
-          <property>workspaceDir</property>
-          <expression>${sonar.workspaceDir}</expression>
+          <name>workDir</name>
+          <description>Path to working directory used to install and start server</description>
+          <property>workDir</property>
+          <expression>${sonar.workDir}</expression>
           <required>true</required>
           <type>java.io.File</type>
           <defaultValue>${java.io.tmpdir}/sonar</defaultValue>

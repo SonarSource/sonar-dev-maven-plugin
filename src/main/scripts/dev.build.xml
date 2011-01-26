@@ -166,41 +166,41 @@
 
   <!-- STEP 2 : install Sonar -->
   <target name="clean-workspace" if="execute.cleanWorkspace">
-    <delete dir="${workspaceDir}/sonar-${runtimeVersion}"/>
-    <mkdir dir="${workspaceDir}"/>
+    <delete dir="${workDir}/sonar-${runtimeVersion}"/>
+    <mkdir dir="${workDir}"/>
   </target>
 
 
   <target name="prepare-sonar-home" unless="is.installed">
-    <copy tofile="${workspaceDir}/sonar-${runtimeVersion}.zip" overwrite="true" verbose="true" flatten="true"
+    <copy tofile="${workDir}/sonar-${runtimeVersion}.zip" overwrite="true" verbose="true" flatten="true"
           failonerror="false"
           file="${localRepository}/org/codehaus/sonar/sonar-application/${runtimeVersion}/sonar-application-${runtimeVersion}.zip">
     </copy>
     <condition property="execute.download-sonar">
       <not>
-        <available file="${workspaceDir}/sonar-${runtimeVersion}.zip"/>
+        <available file="${workDir}/sonar-${runtimeVersion}.zip"/>
       </not>
     </condition>
     <antcall target="download-sonar"/>
-    <unzip src="${workspaceDir}/sonar-${runtimeVersion}.zip" dest="${workspaceDir}"/>
+    <unzip src="${workDir}/sonar-${runtimeVersion}.zip" dest="${workDir}"/>
   </target>
 
 
   <target name="download-sonar" if="execute.download-sonar">
     <echo>Downloading sonar</echo>
     <get src="http://dist.sonar.codehaus.org/sonar-${runtimeVersion}.zip"
-         dest="${workspaceDir}/sonar-${runtimeVersion}.zip"/>
+         dest="${workDir}/sonar-${runtimeVersion}.zip"/>
     <echo>Installing to local maven repo</echo>
     <mvninstall groupId="org.codehaus.sonar"
                 artifactId="sonar-application"
                 version="${runtimeVersion}"
                 packaging="zip"
-                file="${workspaceDir}/sonar-${runtimeVersion}.zip"/>
+                file="${workDir}/sonar-${runtimeVersion}.zip"/>
   </target>
 
   <target name="copy-extensions" if="has.extensions">
     <echo>Copy extensions...</echo>
-    <copy todir="${workspaceDir}/sonar-${runtimeVersion}/extensions" overwrite="true" verbose="true" flatten="false">
+    <copy todir="${workDir}/sonar-${runtimeVersion}/extensions" overwrite="true" verbose="true" flatten="false">
       <fileset dir="${extensionsDir}"/>
     </copy>
   </target>
@@ -208,7 +208,7 @@
 
   <target name="copy-plugin-artifact" if="has.plugin.artifact">
     <echo>Copy plugin artifact...</echo>
-    <copy todir="${workspaceDir}/sonar-${runtimeVersion}/extensions/plugins" overwrite="true" verbose="true"
+    <copy todir="${workDir}/sonar-${runtimeVersion}/extensions/plugins" overwrite="true" verbose="true"
           flatten="true"
           file="${pluginArtifact}">
     </copy>
@@ -216,16 +216,16 @@
 
 
   <target name="configure-sonar">
-    <echo>Workspace: ${workspaceDir}</echo>
+    <echo>Workspace: ${workDir}</echo>
     <condition property="execute.cleanWorkspace" value="true">
       <istrue value="${clean}"/>
     </condition>
     <antcall target="clean-workspace"/>
 
-    <available property="is.installed" file="${workspaceDir}/sonar-${runtimeVersion}/conf/sonar.properties"/>
+    <available property="is.installed" file="${workDir}/sonar-${runtimeVersion}/conf/sonar.properties"/>
     <antcall target="prepare-sonar-home"/>
 
-    <copy todir="${workspaceDir}/sonar-${runtimeVersion}/conf/" overwrite="true" verbose="true" flatten="true">
+    <copy todir="${workDir}/sonar-${runtimeVersion}/conf/" overwrite="true" verbose="true" flatten="true">
       <resources>
         <javaresource name="server/sonar.properties"/>
         <javaresource name="server/wrapper.conf"/>
@@ -251,7 +251,7 @@
     <echo>Start server</echo>
 
     <chmod perm="777" type="file">
-      <fileset dir="${workspaceDir}/sonar-${runtimeVersion}/bin">
+      <fileset dir="${workDir}/sonar-${runtimeVersion}/bin">
         <include name="**/*"/>
       </fileset>
     </chmod>
@@ -268,7 +268,7 @@
     <!--    <condition property="sonar.command" value="restart" else="console">
       <istrue value="${background}"/>
     </condition>-->
-    <exec executable="${workspaceDir}/sonar-${runtimeVersion}/${sonar.bin.path}">
+    <exec executable="${workDir}/sonar-${runtimeVersion}/${sonar.bin.path}">
       <env key="sonar.jdbc.url" value="${jdbcUrl}"/>
       <env key="sonar.jdbc.driverClassName" value="${jdbcDriver}"/>
       <env key="sonar.jdbc.username" value="${jdbcUsername}"/>
@@ -280,7 +280,7 @@
     <condition property="sonar.command" value="restart" else="console">
       <istrue value="${background}"/>
     </condition>
-    <exec executable="${workspaceDir}/sonar-${runtimeVersion}/${sonar.bin.path}">
+    <exec executable="${workDir}/sonar-${runtimeVersion}/${sonar.bin.path}">
       <arg line="${sonar.command}"/>
       <env key="sonar.jdbc.url" value="${jdbcUrl}"/>
       <env key="sonar.jdbc.driverClassName" value="${jdbcDriver}"/>
@@ -290,7 +290,7 @@
   </target>
 
   <target name="stop-standalone">
-    <exec executable="${workspaceDir}/sonar-${runtimeVersion}/${sonar.bin.path}">
+    <exec executable="${workDir}/sonar-${runtimeVersion}/${sonar.bin.path}">
       <arg line="stop"/>
     </exec>
   </target>
@@ -298,10 +298,10 @@
 
   <target name="start-container">
     <echo>Build WAR</echo>
-    <ant dir="${workspaceDir}/sonar-${runtimeVersion}/war/" inheritAll="false"/>
+    <ant dir="${workDir}/sonar-${runtimeVersion}/war/" inheritAll="false"/>
 
-    <mkdir dir="${workspaceDir}/${containerId}"/>
-    <mkdir dir="${workspaceDir}/sonar-${runtimeVersion}/logs"/>
+    <mkdir dir="${workDir}/${containerId}"/>
+    <mkdir dir="${workDir}/sonar-${runtimeVersion}/logs"/>
 
     <condition property="sonar.wait" value="true" else="false">
       <isfalse value="${background}"/>
@@ -309,17 +309,17 @@
     <echo>Start JEE container, background mode: ${background}</echo>
 
     <cargo containerId="${containerId}" action="start" wait="${sonar.wait}" id="${containerId}-${runtimeVersion}"
-           output="${workspaceDir}/sonar-${runtimeVersion}/logs/output.log"
-           log="${workspaceDir}/sonar-${runtimeVersion}/logs/cargo.log">
+           output="${workDir}/sonar-${runtimeVersion}/logs/output.log"
+           log="${workDir}/sonar-${runtimeVersion}/logs/cargo.log">
       <zipurlinstaller
           installurl="${containerUrl}"/>
-      <configuration type="standalone" home="${workspaceDir}/${containerId}">
+      <configuration type="standalone" home="${workDir}/${containerId}">
         <property name="cargo.jvmargs"
                   value="-Xmx1024m -XX:MaxPermSize=256m -server -Dsonar.jdbc.url=${jdbcUrl} -Dsonar.jdbc.driverClassName=${jdbcDriver} -Dsonar.jdbc.username=${jdbcUsername} -Dsonar.jdbc.password=${jdbcPassword}"/>
         <property name="cargo.servlet.port" value="9000"/>
         <property name="cargo.remote.username" value="admin"/>
         <property name="cargo.remote.password" value=""/>
-        <deployable type="war" file="${workspaceDir}/sonar-${runtimeVersion}/war/sonar.war">
+        <deployable type="war" file="${workDir}/sonar-${runtimeVersion}/war/sonar.war">
           <property name="context" value="ROOT"/>
         </deployable>
       </configuration>
@@ -332,7 +332,7 @@
     <cargo containerId="${containerId}" action="stop" wait="true" id="${containerId}-${runtimeVersion}">
       <zipurlinstaller
           installurl="${containerUrl}"/>
-      <configuration type="standalone" home="${workspaceDir}/${containerId}">
+      <configuration type="standalone" home="${workDir}/${containerId}">
         <property name="cargo.jvmargs" value="-Xmx512m -server"/>
         <property name="cargo.servlet.port" value="9000"/>
         <property name="cargo.remote.username" value="admin"/>
