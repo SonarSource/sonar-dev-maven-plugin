@@ -310,7 +310,7 @@
 
     <cargo containerId="${containerId}" action="start" wait="${sonar.wait}" id="${containerId}-${runtimeVersion}"
            output="${workDir}/sonar-${runtimeVersion}/logs/output.log"
-           log="${workDir}/sonar-${runtimeVersion}/logs/cargo.log">
+           log="${workDir}/sonar-${runtimeVersion}/logs/cargo.log" timeout="300000">
       <zipurlinstaller
           installurl="${containerUrl}"/>
       <configuration type="standalone" home="${workDir}/${containerId}">
