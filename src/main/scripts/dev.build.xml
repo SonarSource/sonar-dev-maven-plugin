@@ -404,8 +404,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
         <fileset dir="${projectsDir}" includes="*/pom.xml"/>
       </path>
       <sequential>
-        <mvn pom="@{pom}" failonerror="false" args="clean install -DskipTests"/>
-        <mvnsonar pom="@{pom}"/>
+        <mvn pom="@{pom}" failonerror="false" args="clean install ${buildOptions}"/>
+        <mvnsonar pom="@{pom}" args="${analysisOptions}"/>
       </sequential>
     </for>
   </target>

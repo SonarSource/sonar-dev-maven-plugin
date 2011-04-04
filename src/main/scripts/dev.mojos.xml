@@ -520,6 +520,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
           <type>java.io.File</type>
           <defaultValue>${maven.home}</defaultValue>
         </parameter>
+        <parameter>
+          <name>buildOptions</name>
+          <description>Build options</description>
+          <property>buildOptions</property>
+          <required>false</required>
+          <expression>${sonar.buildOptions}</expression>
+          <type>java.lang.String</type>
+          <defaultValue>-DskipTests</defaultValue>
+        </parameter>
+        <parameter>
+          <name>analysisOptions</name>
+          <description>Analysis options</description>
+          <property>analysisOptions</property>
+          <required>false</required>
+          <expression>${sonar.analysisOptions}</expression>
+          <type>java.lang.String</type>
+        </parameter>
       </parameters>
     </mojo>
 
