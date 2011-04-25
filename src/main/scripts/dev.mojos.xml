@@ -177,7 +177,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
           <expression>${sonar.workDir}</expression>
           <required>true</required>
           <type>java.io.File</type>
-          <defaultValue>${project.build.directory}/it-work</defaultValue>
+          <defaultValue>${project.build.directory}/sonar-work</defaultValue>
         </parameter>
         <parameter>
           <name>mavenHome</name>
@@ -213,7 +213,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
           <expression>${sonar.workDir}</expression>
           <required>true</required>
           <type>java.io.File</type>
-          <defaultValue>${project.build.directory}/it-work</defaultValue>
+          <defaultValue>${project.build.directory}/sonar-work</defaultValue>
         </parameter>
       </parameters>
     </mojo>
@@ -376,7 +376,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
           <expression>${sonar.workDir}</expression>
           <required>true</required>
           <type>java.io.File</type>
-          <defaultValue>${project.build.directory}/it-work</defaultValue>
+          <defaultValue>${project.build.directory}/sonar-work</defaultValue>
         </parameter>
         <parameter>
           <name>containerUrl</name>
@@ -430,7 +430,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
           <expression>${sonar.workDir}</expression>
           <required>true</required>
           <type>java.io.File</type>
-          <defaultValue>${project.build.directory}/it-work</defaultValue>
+          <defaultValue>${project.build.directory}/sonar-work</defaultValue>
         </parameter>
         <parameter>
           <name>containerUrl</name>
