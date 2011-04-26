@@ -399,7 +399,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
   <!-- STEP 5 : analyze projects -->
 
   <target name="analyze" depends="expand-database-profile">
+	<!-- 
+	Setting a blank value in mojo.xml does not work (at least with the maven-plugin-plugin 2.6).
+	Ant properties are immutable, so setting a default value can be done with the following statement : 
+	-->
 	<property name="analysisOptions" value=""/> 
+	
     <for param="pom">
       <path>
         <fileset dir="${projectsDir}" includes="*/pom.xml"/>
