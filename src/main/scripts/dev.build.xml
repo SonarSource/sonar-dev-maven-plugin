@@ -399,6 +399,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
   <!-- STEP 5 : analyze projects -->
 
   <target name="analyze" depends="expand-database-profile">
+	<property name="analysisOptions" value=""/> 
     <for param="pom">
       <path>
         <fileset dir="${projectsDir}" includes="*/pom.xml"/>
