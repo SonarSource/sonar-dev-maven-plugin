@@ -73,9 +73,9 @@
   </ciManagement>
   <distributionManagement>
     <repository>
-      <id>codehaus.org</id>
-      <url>dav:https://dav.codehaus.org/repository/sonar</url>
-      <uniqueVersion>false</uniqueVersion>
+      <id>codehaus-nexus-staging</id>
+      <name>Codehaus Release Repository</name>
+      <url>https://nexus.codehaus.org/service/local/staging/deploy/maven2/</url>
     </repository>
     <snapshotRepository>
       <id>codehaus.org</id>
