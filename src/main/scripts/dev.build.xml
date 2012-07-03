@@ -53,6 +53,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
 
    -->
   <target name="expand-database-profile">
+    <!-- h2 -->
+    <condition property="jdbcUrl" value="jdbc:h2:mem:sonar">
+      <and>
+        <equals arg1="${database}" arg2="h2"/>
+        <not>
+          <isset property="jdbcUrl"/>
+        </not>
+      </and>
+    </condition>
+    <condition property="jdbcDriver" value="org.h2.Driver">
+      <and>
+        <equals arg1="${database}" arg2="h2"/>
+        <not>
+          <isset property="jdbcDriver"/>
+        </not>
+      </and>
+    </condition>
+
     <!-- derby -->
     <condition property="jdbcUrl" value="jdbc:derby://localhost:1527/sonar;create=true">
       <and>

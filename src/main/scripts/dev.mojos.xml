@@ -35,12 +35,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
         </parameter>
         <parameter>
           <name>database</name>
-          <description>Database profile: [derby, mssql, mysql, oracle, postgresql]</description>
+          <description>Database profile: [h2, derby, mssql, mysql, oracle, postgresql]</description>
           <property>database</property>
           <required>false</required>
           <expression>${sonar.database}</expression>
           <type>java.lang.String</type>
-          <defaultValue>derby</defaultValue>
+          <defaultValue>h2</defaultValue>
         </parameter>
         <parameter>
           <name>dropDatabase</name>
@@ -234,12 +234,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
         </parameter>
         <parameter>
           <name>database</name>
-          <description>Database profile: [derby, mssql, mysql, oracle, postgresql].</description>
+          <description>Database profile: [h2, derby, mssql, mysql, oracle, postgresql].</description>
           <property>database</property>
           <required>false</required>
           <expression>${sonar.database}</expression>
           <type>java.lang.String</type>
-          <defaultValue>derby</defaultValue>
+          <defaultValue>h2</defaultValue>
         </parameter>
         <parameter>
           <name>dropDatabase</name>
@@ -461,12 +461,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
       <parameters>
         <parameter>
           <name>database</name>
-          <description>Database profile: [derby, mssql, mysql, oracle, postgresql].</description>
+          <description>Database profile: [h2, derby, mssql, mysql, oracle, postgresql].</description>
           <property>database</property>
           <required>false</required>
           <expression>${sonar.database}</expression>
           <type>java.lang.String</type>
-          <defaultValue>derby</defaultValue>
+          <defaultValue>h2</defaultValue>
         </parameter>
         <parameter>
           <name>jdbcUrl</name>
