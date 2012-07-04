@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
           <required>false</required>
           <expression>${sonar.database}</expression>
           <type>java.lang.String</type>
-          <defaultValue>h2</defaultValue>
+          <defaultValue>derby</defaultValue>
         </parameter>
         <parameter>
           <name>dropDatabase</name>
@@ -239,7 +239,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
           <required>false</required>
           <expression>${sonar.database}</expression>
           <type>java.lang.String</type>
-          <defaultValue>h2</defaultValue>
+          <defaultValue>derby</defaultValue>
         </parameter>
         <parameter>
           <name>dropDatabase</name>
@@ -466,7 +466,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
           <required>false</required>
           <expression>${sonar.database}</expression>
           <type>java.lang.String</type>
-          <defaultValue>h2</defaultValue>
+          <defaultValue>derby</defaultValue>
         </parameter>
         <parameter>
           <name>jdbcUrl</name>
