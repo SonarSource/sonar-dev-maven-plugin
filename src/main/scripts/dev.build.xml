@@ -46,17 +46,49 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
       <os family="unix"/>
     </condition>
   </target>
+  
+  <!-- Change default to derby if sonar version is older than 3.2 -->
+  <target name="adjust-default-database-based-on-sonar-version">
+    <condition property="version_less_than_3_2" value="true">
+  	  <scriptcondition language="javascript" value="false">
+  		  var version_less_than_3_2=
+  		    runtimeVersion.indexOf('1.') == 0
+  		    || runtimeVersion.indexOf('2.') == 0
+  		    || runtimeVersion.indexOf('3.0') == 0
+  		    || runtimeVersion == 3.1
+		    || runtimeVersion.indexOf('3.1.') == 0
+		    || runtimeVersion.indexOf('3.1-') == 0;
+  	    
+  		  self.setValue(version_less_than_3_2);
+      </scriptcondition>
+    </condition>
+  	
+  	<if>
+  		<and>
+          <istrue value="${version_less_than_3_2}"/>
+          <equals arg1="${database}" arg2="h2"/>
+  		</and>
+  		<then>
+  		  	<property name="database.dialect" value="derby"/>
+  	    </then>
+  		<else>
+  		  	<property name="database.dialect" value="${database}"/>
+  	    </else>
+  	</if>
+
+  	<echo>database: ${database.dialect}</echo>
+  </target>
 
   <!--
 
        DATABASE PROFILES 
 
    -->
-  <target name="expand-database-profile">
+  <target name="expand-database-profile" depends="adjust-default-database-based-on-sonar-version">
     <!-- h2 -->
     <condition property="jdbcUrl" value="jdbc:h2:mem:sonar">
       <and>
-        <equals arg1="${database}" arg2="h2"/>
+        <equals arg1="${database.dialect}" arg2="h2"/>
         <not>
           <isset property="jdbcUrl"/>
         </not>
@@ -64,7 +96,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </condition>
     <condition property="jdbcDriver" value="org.h2.Driver">
       <and>
-        <equals arg1="${database}" arg2="h2"/>
+        <equals arg1="${database.dialect}" arg2="h2"/>
         <not>
           <isset property="jdbcDriver"/>
         </not>
@@ -74,7 +106,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     <!-- derby -->
     <condition property="jdbcUrl" value="jdbc:derby://localhost:1527/sonar;create=true">
       <and>
-        <equals arg1="${database}" arg2="derby"/>
+        <equals arg1="${database.dialect}" arg2="derby"/>
         <not>
           <isset property="jdbcUrl"/>
         </not>
@@ -82,7 +114,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </condition>
     <condition property="jdbcDriver" value="org.apache.derby.jdbc.ClientDriver">
       <and>
-        <equals arg1="${database}" arg2="derby"/>
+        <equals arg1="${database.dialect}" arg2="derby"/>
         <not>
           <isset property="jdbcDriver"/>
         </not>
@@ -93,7 +125,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     <condition property="jdbcUrl"
                value="jdbc:mysql://localhost:3306/sonar?useUnicode=true&amp;characterEncoding=utf8">
       <and>
-        <equals arg1="${database}" arg2="mysql"/>
+        <equals arg1="${database.dialect}" arg2="mysql"/>
         <not>
           <isset property="jdbcUrl"/>
         </not>
@@ -101,7 +133,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </condition>
     <condition property="jdbcDriver" value="com.mysql.jdbc.Driver">
       <and>
-        <equals arg1="${database}" arg2="mysql"/>
+        <equals arg1="${database.dialect}" arg2="mysql"/>
         <not>
           <isset property="jdbcDriver"/>
         </not>
@@ -111,7 +143,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     <!-- postgresql -->
     <condition property="jdbcUrl" value="jdbc:postgresql://localhost/sonar">
       <and>
-        <equals arg1="${database}" arg2="postgresql"/>
+        <equals arg1="${database.dialect}" arg2="postgresql"/>
         <not>
           <isset property="jdbcUrl"/>
         </not>
@@ -119,7 +151,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </condition>
     <condition property="jdbcDriver" value="org.postgresql.Driver">
       <and>
-        <equals arg1="${database}" arg2="postgresql"/>
+        <equals arg1="${database.dialect}" arg2="postgresql"/>
         <not>
           <isset property="jdbcDriver"/>
         </not>
@@ -129,7 +161,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     <!-- oracle -->
     <condition property="jdbcUrl" value="jdbc:oracle:thin:@localhost/XE">
       <and>
-        <equals arg1="${database}" arg2="oracle"/>
+        <equals arg1="${database.dialect}" arg2="oracle"/>
         <not>
           <isset property="jdbcUrl"/>
         </not>
@@ -137,7 +169,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </condition>
     <condition property="jdbcDriver" value="oracle.jdbc.driver.OracleDriver">
       <and>
-        <equals arg1="${database}" arg2="oracle"/>
+        <equals arg1="${database.dialect}" arg2="oracle"/>
         <not>
           <isset property="jdbcDriver"/>
         </not>
@@ -147,7 +179,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     <!-- SQLServer -->
     <condition property="jdbcUrl" value="jdbc:jtds:sqlserver://localhost;databaseName=SONAR;SelectMethod=Cursor">
       <and>
-        <equals arg1="${database}" arg2="mssql"/>
+        <equals arg1="${database.dialect}" arg2="mssql"/>
         <not>
           <isset property="jdbcUrl"/>
         </not>
@@ -155,7 +187,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </condition>
     <condition property="jdbcDriver" value="net.sourceforge.jtds.jdbc.Driver">
       <and>
-        <equals arg1="${database}" arg2="mssql"/>
+        <equals arg1="${database.dialect}" arg2="mssql"/>
         <not>
           <isset property="jdbcDriver"/>
         </not>
@@ -190,10 +222,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
          autocommit="true"
          expandProperties="true">
       <resources>
-        <javaresource name="database/${database}/drop-db.sql"/>
-        <javaresource name="database/${database}/drop-user.sql"/>
-        <javaresource name="database/${database}/create-user.sql"/>
-        <javaresource name="database/${database}/create-db.sql"/>
+        <javaresource name="database/${database.dialect}/drop-db.sql"/>
+        <javaresource name="database/${database.dialect}/drop-user.sql"/>
+        <javaresource name="database/${database.dialect}/create-user.sql"/>
+        <javaresource name="database/${database.dialect}/create-db.sql"/>
       </resources>
     </sql>
 
