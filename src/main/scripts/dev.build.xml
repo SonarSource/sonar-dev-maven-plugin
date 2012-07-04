@@ -46,37 +46,36 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
       <os family="unix"/>
     </condition>
   </target>
-  
+
   <!-- Change default to derby if sonar version is older than 3.2 -->
   <target name="adjust-default-database-based-on-sonar-version">
     <condition property="version_less_than_3_2" value="true">
-  	  <scriptcondition language="javascript" value="false">
-  		  var version_less_than_3_2=
-  		    runtimeVersion.indexOf('1.') == 0
-  		    || runtimeVersion.indexOf('2.') == 0
-  		    || runtimeVersion.indexOf('3.0') == 0
-  		    || runtimeVersion == 3.1
-		    || runtimeVersion.indexOf('3.1.') == 0
-		    || runtimeVersion.indexOf('3.1-') == 0;
-  	    
-  		  self.setValue(version_less_than_3_2);
+      <scriptcondition language="javascript" value="false">
+        var version_less_than_3_2=
+          runtimeVersion.indexOf('1.') == 0
+            || runtimeVersion.indexOf('2.') == 0
+            || runtimeVersion.indexOf('3.0') == 0
+            || runtimeVersion == 3.1
+            || runtimeVersion.indexOf('3.1.') == 0
+            || runtimeVersion.indexOf('3.1-') == 0;
+        self.setValue(version_less_than_3_2);
       </scriptcondition>
     </condition>
-  	
-  	<if>
-  		<and>
-          <istrue value="${version_less_than_3_2}"/>
-          <equals arg1="${database}" arg2="h2"/>
-  		</and>
-  		<then>
-  		  	<property name="database.dialect" value="derby"/>
-  	    </then>
-  		<else>
-  		  	<property name="database.dialect" value="${database}"/>
-  	    </else>
-  	</if>
 
-  	<echo>database: ${database.dialect}</echo>
+    <if>
+      <and>
+        <istrue value="${version_less_than_3_2}"/>
+        <equals arg1="${database}" arg2="h2"/>
+      </and>
+      <then>
+        <property name="database.dialect" value="derby"/>
+      </then>
+      <else>
+        <property name="database.dialect" value="${database}"/>
+      </else>
+    </if>
+
+    <echo>database: ${database.dialect}</echo>
   </target>
 
   <!--
