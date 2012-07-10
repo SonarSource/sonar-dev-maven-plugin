@@ -85,7 +85,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
    -->
   <target name="expand-database-profile" depends="adjust-default-database-based-on-sonar-version">
     <!-- h2 -->
-    <condition property="jdbcUrl" value="jdbc:h2:mem:sonar">
+    <condition property="jdbcUrl" value="jdbc:h2:tcp://localhost:9092/sonar">
       <and>
         <equals arg1="${database.dialect}" arg2="h2"/>
         <not>
