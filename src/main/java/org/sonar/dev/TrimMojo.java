@@ -123,35 +123,19 @@ public class TrimMojo extends AbstractMojo {
     return result;
   }
 
-  public File getDirectory() {
-    return directory;
-  }
-
-  public void setDirectory(File directory) {
+  void setDirectory(File directory) {
     this.directory = directory;
   }
 
-  public String[] getIncludes() {
-    return includes;
-  }
-
-  public void setIncludes(String[] includes) {
+  void setIncludes(String[] includes) {
     this.includes = includes;
   }
 
-  public String[] getExcludes() {
-    return excludes;
-  }
-
-  public void setExcludes(String[] excludes) {
+  void setExcludes(String[] excludes) {
     this.excludes = excludes;
   }
 
-  public String getSourceEncoding() {
-    return sourceEncoding;
-  }
-
-  public void setSourceEncoding(String sourceEncoding) {
+  void setSourceEncoding(String sourceEncoding) {
     this.sourceEncoding = sourceEncoding;
   }
 }
