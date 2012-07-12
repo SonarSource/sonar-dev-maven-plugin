@@ -455,6 +455,18 @@
       <version>2.9.1</version>
     </dependency>
 
+    <!-- ANT script engine dependencies for Java5 -->
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant-apache-bsf</artifactId>
+      <version>1.7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mozilla</groupId>
+      <artifactId>rhino</artifactId>
+      <version>1.7R4</version>
+    </dependency>
+
     <!-- unit tests -->
     <dependency>
       <groupId>junit</groupId>
