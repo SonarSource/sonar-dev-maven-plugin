@@ -397,6 +397,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
           <defaultValue>tomcat6x</defaultValue>
         </parameter>
         <parameter>
+          <name>containerArgs</name>
+          <description>Optional VM arguments passed to the container</description>
+          <property>containerArgs</property>
+          <expression>${sonar.containerArgs}</expression>
+          <required>false</required>
+          <type>java.lang.String</type> 
+        </parameter>
+        <parameter>
           <name>mavenHome</name>
           <description>Maven home directory.</description>
           <property>mavenHome</property>

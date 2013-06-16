@@ -376,6 +376,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </condition>
     <echo>Start JEE container, background mode: ${background}</echo>
 
+    <condition property="containerArgs" value="">
+      <not>
+        <isset property="containerArgs" />
+      </not>
+    </condition>
+
     <cargo containerId="${containerId}" action="start" wait="${sonar.wait}" id="${containerId}-${runtimeVersion}"
            output="${workDir}/sonar-${runtimeVersion}/logs/output.log"
            log="${workDir}/sonar-${runtimeVersion}/logs/cargo.log" timeout="900000">
@@ -383,7 +389,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
           installurl="${containerUrl}"/>
       <configuration type="standalone" home="${workDir}/${containerId}">
         <property name="cargo.jvmargs"
-                  value="-Xmx1024m -XX:MaxPermSize=128m -Dsonar.jdbc.url=${jdbcUrl} -Dsonar.jdbc.driverClassName=${jdbcDriver} -Dsonar.jdbc.username=${jdbcUsername} -Dsonar.jdbc.password=${jdbcPassword}"/>
+                  value="-Xmx1024m -XX:MaxPermSize=128m -Dsonar.jdbc.url=${jdbcUrl} -Dsonar.jdbc.driverClassName=${jdbcDriver} -Dsonar.jdbc.username=${jdbcUsername} -Dsonar.jdbc.password=${jdbcPassword} ${containerArgs}"/>
         <property name="cargo.servlet.port" value="9000"/>
         <property name="cargo.remote.username" value="admin"/>
         <property name="cargo.remote.password" value=""/>
