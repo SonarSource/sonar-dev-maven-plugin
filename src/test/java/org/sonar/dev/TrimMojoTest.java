@@ -1,35 +1,34 @@
 /*
- * Sonar, open source software quality management tool.
- * Copyright (C) 2009 SonarSource SA
- * mailto:contact AT sonarsource DOT com
+ * Sonar Development Maven Plugin
+ * Copyright (C) 2010 SonarSource
+ * dev@sonar.codehaus.org
  *
- * Sonar is free software; you can redistribute it and/or
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
  *
- * Sonar is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with Sonar; if not, write to the Free Software
+ * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
+
 package org.sonar.dev;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 public class TrimMojoTest {
 
@@ -79,15 +78,15 @@ public class TrimMojoTest {
 
   private void assertNotTrimmed(File file) throws IOException {
     String content = FileUtils.readFileToString(file);
-    assertThat(content, startsWith("         "));
-    assertThat(content, containsString("            "));
+    assertThat(content).startsWith("         ");
+    assertThat(content).contains("            ");
   }
 
   private void assertTrimmed(File file) throws IOException {
     String content = FileUtils.readFileToString(file);
-    assertThat(content, startsWith("many spaces"));
-    assertThat(content, not(containsString("            ")));
-    assertThat(content, containsString("white spaces should be  kept  in   the   line"));
+    assertThat(content).startsWith("many spaces");
+    assertThat(content).doesNotContain("            ");
+    assertThat(content).contains("white spaces should be  kept  in   the   line");
   }
 
 
