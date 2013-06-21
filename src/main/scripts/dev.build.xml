@@ -421,7 +421,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     <waitfor maxwait="5" maxwaitunit="minute" checkevery="10" checkeveryunit="second">
       <http url="http://localhost:9000"/>
     </waitfor>
-    <echo>Sonar started</echo>
   </target>
 
   <target name="setup" depends="wait-for-server">
@@ -432,6 +431,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
       <isset property="configBackup"/>
     </condition>
     <antcall target="restore-backup"/>
+    <echo>SonarQube server started: http://localhost:9000</echo>
   </target>
 
 
