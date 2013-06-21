@@ -16,7 +16,6 @@
   <description>Maven plugin for Sonar development environment</description>
   <url>http://www.sonarsource.org</url>
 
-
   <repositories>
     <repository>
       <id>sonar</id>
@@ -88,39 +87,37 @@
     <system>bamboo</system>
     <url>http://bamboo.ci.codehaus.org/browse/SONAR</url>
   </ciManagement>
+
+  <!-- Overridding default properties to be able to deploy the release -->
   <distributionManagement>
     <repository>
       <id>codehaus-nexus-staging</id>
       <name>Codehaus Release Repository</name>
       <url>https://nexus.codehaus.org/service/local/staging/deploy/maven2/</url>
     </repository>
-    <snapshotRepository>
-      <id>codehaus.org</id>
-      <url>dav:https://dav.codehaus.org/snapshots.repository/sonar</url>
-      <uniqueVersion>false</uniqueVersion>
-    </snapshotRepository>
   </distributionManagement>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.min.version>2.0</maven.min.version>
-    <jdk.min.version>1.6</jdk.min.version>
     <mavenVersion>2.0.9</mavenVersion>
   </properties>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.plugin-tools</groupId>
+              <artifactId>maven-plugin-tools-ant</artifactId>
+              <version>3.2</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <localCheckout>true</localCheckout>
-          <pushChanges>false</pushChanges>
-          <mavenExecutorId>forked-path</mavenExecutorId>
-          <preparationGoals>clean install</preparationGoals>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
@@ -135,7 +132,6 @@
       </plugin>
     </plugins>
   </build>
-
 
   <dependencies>
     <dependency>
@@ -191,8 +187,6 @@
       <artifactId>ant-nodeps</artifactId>
       <version>1.7.1</version>
     </dependency>
-
-
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
@@ -332,7 +326,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.6</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
