@@ -109,7 +109,8 @@ public class TrimMojo extends AbstractMojo {
     } else {
       ds.setIncludes(includes);
     }
-    ds.addDefaultExcludes(); // .svn, ...
+    // .svn, ...
+    ds.addDefaultExcludes(); 
     if (excludes != null) {
       ds.setExcludes(excludes);
     }
