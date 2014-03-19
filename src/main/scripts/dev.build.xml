@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
 
   <!-- entry points : start and stop -->
   <target name="start"
-          depends="expand-database-profile,prepare-standalone-configuration,drop-database,configure-sonar">
+          depends="adjust-default-download-prefix-on-sonar-version,expand-database-profile,prepare-standalone-configuration,drop-database,configure-sonar">
     <parallel>
       <antcall target="start-standalone"/>
       <antcall target="setup"/>
@@ -78,9 +78,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     <echo>database: ${database.dialect}</echo>
   </target>
 
+  <!-- Change prefix from sonar to sonarqube after than version 4.0 -->
+  <target name="adjust-default-download-prefix-on-sonar-version">
+    <condition property="version_lower_than_4" value="true">
+      <matches pattern="[1-3]\..*" string="${runtimeVersion}"/>
+    </condition>
+
+    <if>
+      <isset property="version_lower_than_4"/>
+      <then>
+        <property name="sonar.download.prefix" value="sonar"/>
+      </then>
+      <else>
+        <property name="sonar.download.prefix" value="sonarqube"/>
+      </else>
+    </if>
+
+    <echo>use '${sonar.download.prefix}' for runtime ${runtimeVersion} as download prefix</echo>
+  </target>
+
   <!--
 
-       DATABASE PROFILES 
+       DATABASE PROFILES
 
    -->
   <target name="expand-database-profile" depends="adjust-default-database-based-on-sonar-version">
@@ -234,41 +253,41 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
 
   <!-- STEP 2 : install Sonar -->
   <target name="clean-workspace" if="execute.cleanWorkspace">
-    <delete dir="${workDir}/sonar-${runtimeVersion}"/>
+    <delete dir="${workDir}/${sonar.download.prefix}-${runtimeVersion}"/>
     <mkdir dir="${workDir}"/>
   </target>
 
 
   <target name="prepare-sonar-home" unless="is.installed">
-    <copy tofile="${workDir}/sonar-${runtimeVersion}.zip" overwrite="true" verbose="true" flatten="true"
+    <copy tofile="${workDir}/${sonar.download.prefix}-${runtimeVersion}.zip" overwrite="true" verbose="true" flatten="true"
           failonerror="false"
           file="${localRepository}/org/codehaus/sonar/sonar-application/${runtimeVersion}/sonar-application-${runtimeVersion}.zip">
     </copy>
     <condition property="execute.download-sonar">
       <not>
-        <available file="${workDir}/sonar-${runtimeVersion}.zip"/>
+        <available file="${workDir}/${sonar.download.prefix}-${runtimeVersion}.zip"/>
       </not>
     </condition>
     <antcall target="download-sonar"/>
-    <unzip src="${workDir}/sonar-${runtimeVersion}.zip" dest="${workDir}"/>
+    <unzip src="${workDir}/${sonar.download.prefix}-${runtimeVersion}.zip" dest="${workDir}"/>
   </target>
 
 
   <target name="download-sonar" if="execute.download-sonar">
     <echo>Downloading sonar</echo>
-    <get src="http://dist.sonar.codehaus.org/sonar-${runtimeVersion}.zip"
-         dest="${workDir}/sonar-${runtimeVersion}.zip"/>
+    <get src="http://dist.sonar.codehaus.org/${sonar.download.prefix}-${runtimeVersion}.zip"
+         dest="${workDir}/${sonar.download.prefix}-${runtimeVersion}.zip"/>
     <echo>Installing to local maven repo</echo>
     <mvninstall groupId="org.codehaus.sonar"
                 artifactId="sonar-application"
                 version="${runtimeVersion}"
                 packaging="zip"
-                file="${workDir}/sonar-${runtimeVersion}.zip"/>
+                file="${workDir}/${sonar.download.prefix}-${runtimeVersion}.zip"/>
   </target>
 
   <target name="copy-extensions" if="has.extensions">
     <echo>Copy extensions...</echo>
-    <copy todir="${workDir}/sonar-${runtimeVersion}/extensions" overwrite="true" verbose="true" flatten="false">
+    <copy todir="${workDir}/${sonar.download.prefix}-${runtimeVersion}/extensions" overwrite="true" verbose="true" flatten="false">
       <fileset dir="${extensionsDir}"/>
     </copy>
   </target>
@@ -276,7 +295,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
 
   <target name="copy-plugin-artifact" if="has.plugin.artifact">
     <echo>Copy plugin artifact...</echo>
-    <copy todir="${workDir}/sonar-${runtimeVersion}/extensions/plugins" overwrite="true" verbose="true"
+    <copy todir="${workDir}/${sonar.download.prefix}-${runtimeVersion}/extensions/plugins" overwrite="true" verbose="true"
           flatten="true"
           file="${pluginArtifact}">
     </copy>
@@ -290,10 +309,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </condition>
     <antcall target="clean-workspace"/>
 
-    <available property="is.installed" file="${workDir}/sonar-${runtimeVersion}/conf/sonar.properties"/>
+    <available property="is.installed" file="${workDir}/${sonar.download.prefix}-${runtimeVersion}/conf/sonar.properties"/>
     <antcall target="prepare-sonar-home"/>
 
-    <copy todir="${workDir}/sonar-${runtimeVersion}/conf/" overwrite="true" verbose="true" flatten="true">
+    <copy todir="${workDir}/${sonar.download.prefix}-${runtimeVersion}/conf/" overwrite="true" verbose="true" flatten="true">
       <resources>
         <javaresource name="server/sonar.properties"/>
         <javaresource name="server/wrapper.conf"/>
@@ -319,7 +338,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     <echo>Start server</echo>
 
     <chmod perm="777" type="file">
-      <fileset dir="${workDir}/sonar-${runtimeVersion}/bin">
+      <fileset dir="${workDir}/${sonar.download.prefix}-${runtimeVersion}/bin">
         <include name="**/*"/>
       </fileset>
     </chmod>
@@ -336,7 +355,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     <!--    <condition property="sonar.command" value="restart" else="console">
       <istrue value="${background}"/>
     </condition>-->
-    <exec executable="${workDir}/sonar-${runtimeVersion}/${sonar.bin.path}">
+    <exec executable="${workDir}/${sonar.download.prefix}-${runtimeVersion}/${sonar.bin.path}">
       <env key="sonar.jdbc.url" value="${jdbcUrl}"/>
       <env key="sonar.jdbc.driverClassName" value="${jdbcDriver}"/>
       <env key="sonar.jdbc.username" value="${jdbcUsername}"/>
@@ -348,7 +367,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     <condition property="sonar.command" value="restart" else="console">
       <istrue value="${background}"/>
     </condition>
-    <exec executable="${workDir}/sonar-${runtimeVersion}/${sonar.bin.path}">
+    <exec executable="${workDir}/${sonar.download.prefix}-${runtimeVersion}/${sonar.bin.path}">
       <arg line="${sonar.command}"/>
       <env key="sonar.jdbc.url" value="${jdbcUrl}"/>
       <env key="sonar.jdbc.driverClassName" value="${jdbcDriver}"/>
@@ -358,7 +377,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
   </target>
 
   <target name="stop-standalone">
-    <exec executable="${workDir}/sonar-${runtimeVersion}/${sonar.bin.path}">
+    <exec executable="${workDir}/${sonar.download.prefix}-${runtimeVersion}/${sonar.bin.path}">
       <arg line="stop"/>
     </exec>
   </target>
@@ -366,10 +385,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
 
   <target name="start-container">
     <echo>Build WAR</echo>
-    <ant dir="${workDir}/sonar-${runtimeVersion}/war/" inheritAll="false"/>
+    <ant dir="${workDir}/${sonar.download.prefix}-${runtimeVersion}/war/" inheritAll="false"/>
 
     <mkdir dir="${workDir}/${containerId}"/>
-    <mkdir dir="${workDir}/sonar-${runtimeVersion}/logs"/>
+    <mkdir dir="${workDir}/${sonar.download.prefix}-${runtimeVersion}/logs"/>
 
     <condition property="sonar.wait" value="true" else="false">
       <isfalse value="${background}"/>
@@ -383,8 +402,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </condition>
 
     <cargo containerId="${containerId}" action="start" wait="${sonar.wait}" id="${containerId}-${runtimeVersion}"
-           output="${workDir}/sonar-${runtimeVersion}/logs/output.log"
-           log="${workDir}/sonar-${runtimeVersion}/logs/cargo.log" timeout="900000">
+           output="${workDir}/${sonar.download.prefix}-${runtimeVersion}/logs/output.log"
+           log="${workDir}/${sonar.download.prefix}-${runtimeVersion}/logs/cargo.log" timeout="900000">
       <zipurlinstaller
           installurl="${containerUrl}"/>
       <configuration type="standalone" home="${workDir}/${containerId}">
@@ -393,7 +412,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
         <property name="cargo.servlet.port" value="9000"/>
         <property name="cargo.remote.username" value="admin"/>
         <property name="cargo.remote.password" value=""/>
-        <deployable type="war" file="${workDir}/sonar-${runtimeVersion}/war/sonar.war">
+        <deployable type="war" file="${workDir}/${sonar.download.prefix}-${runtimeVersion}/war/sonar.war">
           <property name="context" value="ROOT"/>
         </deployable>
       </configuration>
@@ -404,8 +423,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
   <target name="stop-container">
     <echo>Stopping JEE container</echo>
     <cargo containerId="${containerId}" action="stop" wait="true" id="${containerId}-${runtimeVersion}">
-      <zipurlinstaller
-          installurl="${containerUrl}"/>
+      <zipurlinstaller installurl="${containerUrl}"/>
       <configuration type="standalone" home="${workDir}/${containerId}">
         <property name="cargo.jvmargs" value="-Xmx512m"/>
         <property name="cargo.servlet.port" value="9000"/>
@@ -454,12 +472,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
   <!-- STEP 5 : analyze projects -->
 
   <target name="analyze" depends="expand-database-profile">
-	<!-- 
+	<!--
 	Setting a blank value in mojo.xml does not work (at least with the maven-plugin-plugin 2.6).
-	Ant properties are immutable, so setting a default value can be done with the following statement : 
+	Ant properties are immutable, so setting a default value can be done with the following statement :
 	-->
-	<property name="analysisOptions" value=""/> 
-	
+	<property name="analysisOptions" value=""/>
+
     <for param="pom">
       <path>
         <fileset dir="${projectsDir}" includes="*/pom.xml"/>
