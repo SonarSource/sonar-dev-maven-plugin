@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.codehaus.sonar-plugins</groupId>
     <artifactId>parent</artifactId>
-    <version>17</version>
+    <version>18</version>
     <relativePath/>
   </parent>
 
@@ -13,9 +13,9 @@
   <artifactId>sonar-dev-maven-plugin</artifactId>
   <version>1.8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-  <name>Sonar Development Maven Plugin</name>
-  <description>Maven plugin for Sonar development environment</description>
-  <url>http://www.sonarsource.org</url>
+  <name>SonarQube Development Maven Plugin</name>
+  <description>Tool for development of SonarQube plugins</description>
+  <url>http://www.sonarqube.org</url>
 
   <repositories>
     <repository>
@@ -85,6 +85,7 @@
     <system>jira</system>
     <url>https://jira.codehaus.org/browse/SONARPLUGINS/component/15959</url>
   </issueManagement>
+
   <ciManagement>
     <system>bamboo</system>
     <url>http://bamboo.ci.codehaus.org/browse/SONAR</url>
