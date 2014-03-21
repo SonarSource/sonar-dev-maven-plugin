@@ -137,6 +137,13 @@
   </build>
 
   <dependencies>
+    <!-- for goal "upload" -->
+    <dependency>
+      <groupId>com.github.kevinsawicki</groupId>
+      <artifactId>http-request</artifactId>
+      <version>5.6</version>
+    </dependency>
+
     <dependency>
       <groupId>fikin</groupId>
       <artifactId>fikin-ant</artifactId>
