@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
         </parameter>
         <parameter>
           <name>database</name>
-          <description>Database profile: [h2, derby, mssql, mysql, oracle, postgresql]</description>
+          <description>Database profile: [h2, mssql, mysql, oracle, postgresql]</description>
           <property>database</property>
           <required>false</required>
           <expression>${sonar.database}</expression>
@@ -234,7 +234,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
         </parameter>
         <parameter>
           <name>database</name>
-          <description>Database profile: [h2, derby, mssql, mysql, oracle, postgresql].</description>
+          <description>Database profile: [h2, mssql, mysql, oracle, postgresql].</description>
           <property>database</property>
           <required>false</required>
           <expression>${sonar.database}</expression>
@@ -469,7 +469,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
       <parameters>
         <parameter>
           <name>database</name>
-          <description>Database profile: [h2, derby, mssql, mysql, oracle, postgresql].</description>
+          <description>Database profile: [h2, mssql, mysql, oracle, postgresql].</description>
           <property>database</property>
           <required>false</required>
           <expression>${sonar.database}</expression>

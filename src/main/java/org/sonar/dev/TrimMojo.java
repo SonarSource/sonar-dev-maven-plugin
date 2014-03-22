@@ -32,6 +32,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * Remove blank lines from Ruby on Rails HTML templates.
+ *
  * @goal trim
  */
 public class TrimMojo extends AbstractMojo {
@@ -55,11 +57,10 @@ public class TrimMojo extends AbstractMojo {
    */
   private String[] excludes;
 
-
   /**
    * Specifies the encoding of the source files.
    *
-   * @parameter expression="${encoding}" default-value="${project.build.sourceEncoding}"
+   * @parameter property="encoding" default-value="${project.build.sourceEncoding}"
    */
   private String sourceEncoding;
 

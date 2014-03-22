@@ -49,7 +49,7 @@ public class UploadMojo extends AbstractMojo {
   /**
    * Home directory of SonarQube local installation.
    *
-   * @parameter expression="${sonarHome}"
+   * @parameter property="sonarHome"
    * @required
    */
   private File sonarHome;
@@ -57,7 +57,7 @@ public class UploadMojo extends AbstractMojo {
   /**
    * Server URL
    *
-   * @parameter expression="${sonarUrl}" default-value="http://localhost:9000"
+   * @parameter property="sonarUrl" default-value="http://localhost:9000"
    * @required
    */
   private URL sonarUrl;
