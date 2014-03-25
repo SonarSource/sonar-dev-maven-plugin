@@ -19,8 +19,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
 -->
 <project>
 
-  <taskdef resource="cargo.tasks"/>
-  <taskdef name="httpmpost" classname="net.sf.fikin.ant.httpclientanttask.AntMultipartPostMethod"/>
   <taskdef name="httppost" classname="net.sf.fikin.ant.httpclientanttask.AntPostMethod"/>
   <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
@@ -182,16 +180,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </condition>
   </target>
 
-
-  <target name="start-war" depends="expand-database-profile,drop-database,configure-sonar">
-    <parallel>
-      <antcall target="start-container"/>
-      <antcall target="setup"/>
-    </parallel>
-  </target>
-
-  <target name="stop-war" depends="stop-container"/>
-
   <!-- STEP 1 : initialize the database -->
   <target name="drop-database">
     <condition property="execute.drop.database">
@@ -351,57 +339,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
     </exec>
   </target>
 
-
-  <target name="start-container">
-    <echo>Build WAR</echo>
-    <ant dir="${workDir}/${sonar.download.prefix}-${runtimeVersion}/war/" inheritAll="false"/>
-
-    <mkdir dir="${workDir}/${containerId}"/>
-    <mkdir dir="${workDir}/${sonar.download.prefix}-${runtimeVersion}/logs"/>
-
-    <condition property="sonar.wait" value="true" else="false">
-      <isfalse value="${background}"/>
-    </condition>
-    <echo>Start JEE container, background mode: ${background}</echo>
-
-    <condition property="containerArgs" value="">
-      <not>
-        <isset property="containerArgs" />
-      </not>
-    </condition>
-
-    <cargo containerId="${containerId}" action="start" wait="${sonar.wait}" id="${containerId}-${runtimeVersion}"
-           output="${workDir}/${sonar.download.prefix}-${runtimeVersion}/logs/output.log"
-           log="${workDir}/${sonar.download.prefix}-${runtimeVersion}/logs/cargo.log" timeout="900000">
-      <zipurlinstaller
-          installurl="${containerUrl}"/>
-      <configuration type="standalone" home="${workDir}/${containerId}">
-        <property name="cargo.jvmargs"
-                  value="-Xmx1024m -XX:MaxPermSize=128m -Dsonar.jdbc.url=${jdbcUrl} -Dsonar.jdbc.driverClassName=${jdbcDriver} -Dsonar.jdbc.username=${jdbcUsername} -Dsonar.jdbc.password=${jdbcPassword} ${containerArgs}"/>
-        <property name="cargo.servlet.port" value="9000"/>
-        <property name="cargo.remote.username" value="admin"/>
-        <property name="cargo.remote.password" value=""/>
-        <deployable type="war" file="${workDir}/${sonar.download.prefix}-${runtimeVersion}/war/sonar.war">
-          <property name="context" value="ROOT"/>
-        </deployable>
-      </configuration>
-    </cargo>
-    <antcall target="wait-for-server"/>
-  </target>
-
-  <target name="stop-container">
-    <echo>Stopping JEE container</echo>
-    <cargo containerId="${containerId}" action="stop" wait="true" id="${containerId}-${runtimeVersion}">
-      <zipurlinstaller installurl="${containerUrl}"/>
-      <configuration type="standalone" home="${workDir}/${containerId}">
-        <property name="cargo.jvmargs" value="-Xmx512m"/>
-        <property name="cargo.servlet.port" value="9000"/>
-        <property name="cargo.remote.username" value="admin"/>
-        <property name="cargo.remote.password" value=""/>
-      </configuration>
-    </cargo>
-  </target>
-
   <!-- STEP 4 : setup sonar -->
 
   <target name="wait-for-server">
@@ -412,29 +349,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
 
   <target name="setup" depends="wait-for-server">
     <httppost url="http://localhost:9000/setup/setup_database" logLevel="none"/>
-    <echo message="Database is up."/>
-
-    <condition property="execute.restore.backup" value="true">
-      <isset property="configBackup"/>
-    </condition>
-    <antcall target="restore-backup"/>
+    <echo message="Database is up"/>
     <echo>SonarQube server started: http://localhost:9000</echo>
-  </target>
-
-
-  <target name="restore-backup" if="execute.restore.backup">
-    <echo message="Restoring sonar backup"/>
-
-    <httppost url="http://localhost:9000/sessions/login" logLevel="none">
-      <post name="login" value="admin"/>
-      <post name="password" value="admin"/>
-    </httppost>
-    <echo message="Logged in."/>
-
-    <httpmpost url="http://localhost:9000/backup/import" logLevel="none">
-      <postFile name="file" file="${configBackup}"/>
-    </httpmpost>
-    <echo message="Backup is restored."/>
   </target>
 
 

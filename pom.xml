@@ -207,22 +207,6 @@
       <artifactId>commons-io</artifactId>
       <version>2.4</version>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.cargo</groupId>
-      <artifactId>cargo-ant</artifactId>
-      <!-- Godin:
-      Seems that version 1.0 has corrupted metadata in central maven repo,
-      so in this case project can't be built with Maven 2.2
-      And versions 1.0.1 - 1.0.3 doesn't work for us.
-      -->
-      <version>1.4.7</version>
-      <exclusions>
-        <exclusion>
-          <groupId>ant</groupId>
-          <artifactId>ant</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <!-- JDBC drivers are used when the database is created (property dropDatabase is true) -->
     <dependency>
