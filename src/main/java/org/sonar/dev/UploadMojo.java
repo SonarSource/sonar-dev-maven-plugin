@@ -47,6 +47,14 @@ import java.net.URL;
 public class UploadMojo extends AbstractMojo {
 
   /**
+   * Module packaging
+   *
+   * @parameter property="project.packaging"
+   * @required
+   */
+  private String packaging;
+
+  /**
    * Home directory of SonarQube local installation.
    *
    * @parameter property="sonarHome"
@@ -71,9 +79,11 @@ public class UploadMojo extends AbstractMojo {
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    checkSettings();
-    copyJar();
-    restartServer();
+    if ("sonar-plugin".equals(packaging)) {
+      checkSettings();
+      copyJar();
+      restartServer();
+    }
   }
 
   private void checkSettings() throws MojoExecutionException {
