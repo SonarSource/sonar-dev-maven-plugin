@@ -21,38 +21,42 @@ package org.sonar.dev;
 
 import com.github.kevinsawicki.http.HttpRequest;
 import org.apache.commons.io.FileUtils;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Uploads the plugin artifact to server. Requires SonarQube 4.3 or greater.
- *
+ * <p/>
  * <ol>
- *   <li>Enable the development mode on server : add sonar.dev=true to conf/sonar.properties</li>
- *   <li>Restart server</li>
- *   <li>Build and upload the plugin : <code>mvn package org.codehaus.sonar:sonar-dev-maven-plugin::upload</code>.
- *   It requires the properties sonarHome (path to local server installation) and sonarUrl (default value
- *   is http://localhost:9000)
- *   </li>
+ * <li>Enable the development mode on server : add sonar.dev=true to conf/sonar.properties</li>
+ * <li>Restart server</li>
+ * <li>Build and upload the plugin : <code>mvn package org.codehaus.sonar:sonar-dev-maven-plugin::upload</code>.
+ * It requires the properties sonarHome (path to local server installation) and sonarUrl (default value
+ * is http://localhost:9000)
+ * </li>
  * </ol>
  *
  * @goal upload
+ * @aggregator
+ * @requiresDependencyResolution compile
  */
 public class UploadMojo extends AbstractMojo {
 
   /**
-   * Module packaging
-   *
-   * @parameter property="project.packaging"
+   * @parameter property="session"
    * @required
+   * @readonly
    */
-  private String packaging;
+  private MavenSession session;
 
   /**
    * Home directory of SonarQube local installation.
@@ -70,26 +74,24 @@ public class UploadMojo extends AbstractMojo {
    */
   private URL sonarUrl;
 
-  /**
-   * Directory containing the build files.
-   *
-   * @parameter expression="${project.build.directory}/${project.build.finalName}.jar"
-   */
-  private File jar;
-
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    if ("sonar-plugin".equals(packaging)) {
-      checkSettings();
-      copyJar();
+    checkSonarHome();
+    boolean deployed = false;
+    for (MavenProject module : (List<MavenProject>) session.getSortedProjects()) {
+      if ("sonar-plugin".equals(module.getPackaging())) {
+        copyJar(module);
+        deployed = true;
+      }
+    }
+    if (deployed) {
       restartServer();
+    } else {
+      getLog().info("No plugins to be uploaded");
     }
   }
 
-  private void checkSettings() throws MojoExecutionException {
-    if (!jar.isFile() && !jar.exists()) {
-      throw new MojoExecutionException("Plugin file does not exist: " + jar.getAbsolutePath());
-    }
+  private void checkSonarHome() throws MojoExecutionException {
     if (!sonarHome.isDirectory() && !sonarHome.exists()) {
       throw new MojoExecutionException("Server home directory does not exist: " + sonarHome.getAbsolutePath());
     }
@@ -99,8 +101,13 @@ public class UploadMojo extends AbstractMojo {
     }
   }
 
-  private void copyJar() throws MojoExecutionException {
-    getLog().info("Copying JAR");
+  private void copyJar(MavenProject module) throws MojoExecutionException {
+    File buildDir = new File(module.getBuild().getDirectory());
+    File jar = new File(buildDir, module.getBuild().getFinalName() + ".jar");
+    if (!jar.exists()) {
+      throw new MojoExecutionException("Plugin artifact does not exist for module " + module.getArtifactId() + ": " + jar.getAbsolutePath());
+    }
+    getLog().info("Copying " + jar.getAbsolutePath());
     File downloadsDir = new File(sonarHome, "extensions/downloads");
     downloadsDir.mkdir();
     try {
