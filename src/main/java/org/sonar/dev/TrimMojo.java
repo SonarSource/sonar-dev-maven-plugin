@@ -24,7 +24,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -64,7 +63,7 @@ public class TrimMojo extends AbstractMojo {
    */
   private String sourceEncoding;
 
-  public void execute() throws MojoExecutionException, MojoFailureException {
+  public void execute() throws MojoExecutionException {
     if (shouldExecute()) {
       trimDirectory();
     }
@@ -110,7 +109,7 @@ public class TrimMojo extends AbstractMojo {
       ds.setIncludes(includes);
     }
     // .svn, ...
-    ds.addDefaultExcludes(); 
+    ds.addDefaultExcludes();
     if (excludes != null) {
       ds.setExcludes(excludes);
     }
