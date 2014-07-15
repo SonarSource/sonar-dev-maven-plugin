@@ -25,7 +25,6 @@ import org.apache.commons.io.LineIterator;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,8 +76,8 @@ public class TrimMojo extends AbstractMojo {
         LineIterator lines = FileUtils.lineIterator(file, sourceEncoding);
         while (lines.hasNext()) {
           String line = lines.nextLine();
-          if (StringUtils.isNotBlank(line)) {
-            sb.append(StringUtils.trim(line));
+          if (line != null && !"".equals(line.trim())) {
+            sb.append(line.trim());
             sb.append(IOUtils.LINE_SEPARATOR);
           }
         }
