@@ -7,9 +7,6 @@ function strongEcho {
   echo "================ $1 ================="
 }
 
-
-case "$TARGET" in
-
 if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   strongEcho 'Build and analyze commit in master'
   # this commit is master must be built and analyzed (with upload of report)
